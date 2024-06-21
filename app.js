@@ -153,6 +153,7 @@
 
 
 
+require('dotenv').config();
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
@@ -164,34 +165,39 @@ const port = 3002;
 
 app.use(cors());
 app.use(bodyParser.json());
-require('dotenv').config();
-const db = mysql.createConnection({
+// const db = mysql.createConnection({
+//   host: process.env.DB_HOST,
+//   user: process.env.DB_USER,
+//   password: process.env.DB_PASSWORD,
+//   database: process.env.DB_NAME,
+//   waitForConnections: true,
+//   connectionLimit: 10,
+//   queueLimit: 0,
+//   connectTimeout: 10000
+// });
+
+// db.connect(err => {
+//   if (err) {
+//     throw err;
+//   }
+//   console.log('MySQL connected...');
+// });
+
+const pool = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
 });
-
-db.connect(err => {
+pool.getConnection((err)=>{
   if (err) {
-    throw err;
-  }
-  console.log('MySQL connected...');
-});
-
-const pool = mysql.createPool({
-  host: '89.117.27.52',
-  user: 'u898742638_shrimohanbone',
-  password: 'IgSHK39!',
-  database: 'u898742638_shriMohanJi',
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-});
-
+        throw err;
+      }
+      console.log('MySQL connected...')
+})
 
 const formatIndianDate = (date) => {
   const d = new Date(date);
@@ -251,7 +257,7 @@ app.post('/api/login', (req, res) => {
     if (err) throw err;
 
     if (result.length > 0) {
-      const token = jwt.sign({ id: result[0].id }, JWT_SECRET, { expiresIn: '1h' });
+      const token = jwt.sign({ id: result[0].id },  process.env.JWT_SECRET, { expiresIn: '1h' });
       res.json({ token });
     } else {
       console.log(res);
