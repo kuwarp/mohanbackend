@@ -242,6 +242,29 @@ app.post('/api/login', (req, res) => {
 });
 
 // Submit Form Endpoint
+// app.post('/submit-form', (req, res) => {
+//   generateCustomId((err, customId) => {
+//     if (err) {
+//       console.error(err);
+//       return res.status(500).send('Server error');
+//     }
+
+//     const { date, sex, type, address, disease, otherDisease, caseDetail, totalVisit, name, age,dressing,dressingCost } = req.body;
+
+//     const query = 'INSERT INTO user_data (customId, date, sex, TypeData, address, disease, otherDisease, caseDetail, TotalVisit, name, age,dressing,dressingCost) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)';
+//     const values = [customId, date, sex, type, address, disease, otherDisease, caseDetail, totalVisit, name, age,dressing,dressingCost];
+
+//     pool.query(query, values, (err, result) => {
+//       if (err) {
+//         console.error('Error executing query:', err);
+//         return res.status(500).send('Server error');
+//       }
+// console.log(res);
+//       res.status(200).json({ id: result.insertId, customId, ...req.body });
+//     });
+//   });
+// });
+
 app.post('/submit-form', (req, res) => {
   generateCustomId((err, customId) => {
     if (err) {
@@ -249,22 +272,23 @@ app.post('/submit-form', (req, res) => {
       return res.status(500).send('Server error');
     }
 
-    const { date, sex, type, address, disease, otherDisease, caseDetail, totalVisit, name, age,dressing,dressingCost } = req.body;
+    const { date, sex, type, address, disease, otherDisease, caseDetail, totalVisit, name, age, dressing, dressingCost, medicines } = req.body;
+    const medNames = medicines.map(med => med.name);
+    const medPrices = medicines.map(med => med.price);
 
-    const query = 'INSERT INTO user_data (customId, date, sex, TypeData, address, disease, otherDisease, caseDetail, TotalVisit, name, age,dressing,dressingCost) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)';
-    const values = [customId, date, sex, type, address, disease, otherDisease, caseDetail, totalVisit, name, age,dressing,dressingCost];
+    const query = 'INSERT INTO user_data (customId, date, sex, TypeData, address, disease, otherDisease, caseDetail, TotalVisit, name, age, dressing, dressingCost, medhub, medhubPrice) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    const values = [customId, date, sex, type, address, disease, otherDisease, caseDetail, totalVisit, name, age, dressing, dressingCost, JSON.stringify(medNames), JSON.stringify(medPrices)];
 
     pool.query(query, values, (err, result) => {
       if (err) {
         console.error('Error executing query:', err);
         return res.status(500).send('Server error');
       }
-console.log(res);
+      console.log(res);
       res.status(200).json({ id: result.insertId, customId, ...req.body });
     });
   });
 });
-
 // app.delete('/users/delete/:id',(req,res)=>{
 //   const userId=req.params.id
 //   pool.query('DELETE  FROM user_data WHERE id= ? ',[userId],(err,res)=>{
