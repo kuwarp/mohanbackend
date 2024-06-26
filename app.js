@@ -165,24 +165,6 @@ const port = 3002;
 
 app.use(cors());
 app.use(bodyParser.json());
-// const db = mysql.createConnection({
-//   host: process.env.DB_HOST,
-//   user: process.env.DB_USER,
-//   password: process.env.DB_PASSWORD,
-//   database: process.env.DB_NAME,
-//   waitForConnections: true,
-//   connectionLimit: 10,
-//   queueLimit: 0,
-//   connectTimeout: 10000
-// });
-
-// db.connect(err => {
-//   if (err) {
-//     throw err;
-//   }
-//   console.log('MySQL connected...');
-// });
-
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -214,14 +196,7 @@ app.get('/users', (req, res) => {
       return res.status(500).send('Server error');
     }
 
-    // For PostgreSQL
-    // const formattedResults = results.rows.map(row => ({
-    //   ...row,
-    //   date: formatIndianDate(row.date)
-    // }));
-
-    // For MySQL
-    const formattedResults = results.map(row => ({
+     const formattedResults = results.map(row => ({
       ...row,
       date: formatIndianDate(row.date)
     }));
@@ -274,10 +249,10 @@ app.post('/submit-form', (req, res) => {
       return res.status(500).send('Server error');
     }
 
-    const { date, sex, type, address, disease, otherDisease, caseDetail, totalVisit, name, age } = req.body;
+    const { date, sex, type, address, disease, otherDisease, caseDetail, totalVisit, name, age,dressing,dressingCost } = req.body;
 
-    const query = 'INSERT INTO user_data (customId, date, sex, TypeData, address, disease, otherDisease, caseDetail, TotalVisit, name, age) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-    const values = [customId, date, sex, type, address, disease, otherDisease, caseDetail, totalVisit, name, age];
+    const query = 'INSERT INTO user_data (customId, date, sex, TypeData, address, disease, otherDisease, caseDetail, TotalVisit, name, age,dressing,dressingCost) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)';
+    const values = [customId, date, sex, type, address, disease, otherDisease, caseDetail, totalVisit, name, age,dressing,dressingCost];
 
     pool.query(query, values, (err, result) => {
       if (err) {
@@ -290,36 +265,40 @@ console.log(res);
   });
 });
 
-// Get Users
-// app.get('/users', (req, res) => {
-//   pool.query('SELECT * FROM user_data', (err, results) => {
-//     if (err) {
-//       console.error('Error fetching users:', err);
-//       return res.status(500).send('Server error');
+// app.delete('/users/delete/:id',(req,res)=>{
+//   const userId=req.params.id
+//   pool.query('DELETE  FROM user_data WHERE id= ? ',[userId],(err,res)=>{
+//     if(err){
+//       console.error(err);
+//     return res.status(500)
 //     }
-//     console.log(results);
-//     res.json(results);
-//   });
-// });
-
-// app.get('/users', (req, res) => {
-//   pool.query('SELECT * FROM user_data', (err, results) => {
-//     if (err) {
-//       console.error('Error fetching users:', err);
-//       return res.status(500).send('Server error');
+//     if (req.affectedRows === 0) {
+//       return res.status(404).send('User not found');
 //     }
+//     res.status(200).send('User deleted successfully');
+//   })
 
-   
-//     const formattedResults = results.map(row => ({
-//       ...row,
-//       date: row.date.toISOString().split('T')[0] 
-//     }));
+// })
 
-//     console.log(formattedResults);
-//     res.json(formattedResults);
-//   });
-// });
-// Update User
+
+
+app.delete('/users/delete/:id', (req, res) => {
+  const id = req.params.id;
+  const sql = 'DELETE FROM user_data WHERE id = ?';
+
+  pool.query(sql, [id], (err, result) => {
+      if (err) {
+          console.error('Error deleting record:', err);
+          res.status(500).send('Internal Server Error');
+          return;
+      }
+      if (result.affectedRows === 0) {
+          res.status(404).send('Record not found');
+          return;
+      }
+      res.send('Record deleted successfully');
+  });
+});
 app.put('/users/:id', (req, res) => {
   const userId = req.params.id;
   const { date, TotalVisit } = req.body;
@@ -361,31 +340,34 @@ app.listen(port, () => {
 
 
 
-// const express = require('express');
-// const bodyParser = require('body-parser');
-// const cors = require('cors');
-// const dotenv = require('dotenv');
-// const userController = require('./src/controllers/dataController');
-// const authController = require('./src/controllers/authController');
-// const authMiddleware = require('./src/middleware/authMiddle');
 
-// dotenv.config();
-
-// const app = express();
-// const port = process.env.PORT || 3002;
-
-// app.use(cors());
-// app.use(bodyParser.json());
-
-// // Routes
-// app.post('/api/login', authController.login);
-// app.post('/api/users', authMiddleware, userController.createUser);
-// app.put('/api/users/:id', authMiddleware, userController.updateUser);
-
-// app.listen(port, () => {
-//   console.log(`Server running on port ${port}`);
-//   console.log(process.env.DB_HOST);
-// console.log(process.env.DB_USER);
-// // Log other environment variables as needed
-
+// Get Users
+// app.get('/users', (req, res) => {
+//   pool.query('SELECT * FROM user_data', (err, results) => {
+//     if (err) {
+//       console.error('Error fetching users:', err);
+//       return res.status(500).send('Server error');
+//     }
+//     console.log(results);
+//     res.json(results);
+//   });
 // });
+
+// app.get('/users', (req, res) => {
+//   pool.query('SELECT * FROM user_data', (err, results) => {
+//     if (err) {
+//       console.error('Error fetching users:', err);
+//       return res.status(500).send('Server error');
+//     }
+
+   
+//     const formattedResults = results.map(row => ({
+//       ...row,
+//       date: row.date.toISOString().split('T')[0] 
+//     }));
+
+//     console.log(formattedResults);
+//     res.json(formattedResults);
+//   });
+// });
+// Update User
