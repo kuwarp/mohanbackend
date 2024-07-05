@@ -11,10 +11,10 @@ const port = 3002;
 app.use(cors());
 app.use(bodyParser.json());
 const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+  host: '89.117.27.52',
+    user: 'u898742638_shrimohanbone',
+    password: 'IgSHK39!',
+    database: 'u898742638_shriMohanJi',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
