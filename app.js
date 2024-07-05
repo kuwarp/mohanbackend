@@ -73,12 +73,12 @@ app.post('/submit-form', (req, res) => {
       return res.status(500).send('Server error');
     }
 
-    const { date, sex, type, address, disease, otherDisease, caseDetail, totalVisit, name, age, dressing, dressingCost, medicines,outStandingAmount } = req.body;
+    const { date, sex, type, address, disease, otherDisease, caseDetail, totalVisit, name, age, dressing, dressingCost, medicines,outStandingAmount,phoneNumber } = req.body;
     const medNames = medicines.map(med => med.name);
     const medPrices = medicines.map(med => med.price);
 
-    const query = 'INSERT INTO user_data (customId, date, sex, TypeData, address, disease, otherDisease, caseDetail, TotalVisit, name, age, dressing, dressingCost, medhub, medhubPrice,outStandingAmount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-    const values = [customId, date, sex, type, address, disease, otherDisease, caseDetail, totalVisit, name, age, dressing, dressingCost, JSON.stringify(medNames), JSON.stringify(medPrices),outStandingAmount];
+    const query = 'INSERT INTO user_data (customId, date, sex, TypeData, address, disease, otherDisease, caseDetail, TotalVisit, name, age, dressing, dressingCost, medhub, medhubPrice,outStandingAmount,phoneNumber) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    const values = [customId, date, sex, type, address, disease, otherDisease, caseDetail, totalVisit, name, age, dressing, dressingCost, JSON.stringify(medNames), JSON.stringify(medPrices),outStandingAmount,phoneNumber];
 
     pool.query(query, values, (err, result) => {
       if (err) {
