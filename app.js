@@ -206,7 +206,7 @@ app.put('/user/:id', (req, res) => {
 });
 app.put('/users/:id', (req, res) => {
   const userId = req.params.id;
-  const { date, TotalVisit,outStandingAmount, medicines, dressing, dressingCost } = req.body;
+  const {name, date, TotalVisit,outStandingAmount, medicines, dressing, dressingCost } = req.body;
   const formattedDate = convertToIST(date);
 
   pool.query('SELECT * FROM user_data WHERE id = ?', [userId], (err, results) => {
@@ -232,8 +232,8 @@ app.put('/users/:id', (req, res) => {
       currentDressingHistory.push(newMedicineHistory);
     }
 
-    const query = 'UPDATE user_data SET date = ?, TotalVisit = ?, outStandingAmount= ?, medicineHistory = ?, dressingHistory = ?, previousDates = ? WHERE id = ?';
-    pool.query(query, [formattedDate, TotalVisit,outStandingAmount, JSON.stringify(currentMedicineHistory), JSON.stringify(currentDressingHistory), JSON.stringify(currentMedicineHistory.map(item => item.date)), userId], (err, result) => {
+    const query = 'UPDATE user_data SET name= ?, date = ?, TotalVisit = ?, outStandingAmount= ?, medicineHistory = ?, dressingHistory = ?, previousDates = ? WHERE id = ?';
+    pool.query(query, [name, formattedDate, TotalVisit,outStandingAmount, JSON.stringify(currentMedicineHistory), JSON.stringify(currentDressingHistory), JSON.stringify(currentMedicineHistory.map(item => item.date)), userId], (err, result) => {
       if (err) {
         console.error('Error updating user:', err);
         return res.status(500).send('Server error');
